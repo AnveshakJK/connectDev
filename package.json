@@ -1,0 +1,20 @@
+{
+  "name": "connectdev",
+  "version": "1.0.0",
+  "description": "this about connecting developer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev":"nodemon app.js",
+    "start":"node app.js"
+  },
+  "keywords": [
+    "node",
+    "backend"
+  ],
+  "author": "Jayank",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
