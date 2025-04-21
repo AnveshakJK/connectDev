@@ -1,18 +1,28 @@
 const express = require("express");
 const app = express();
 
-// app.use((req,res)=>{
-//     res.send("Hello from server");
-// });  // The first app.use() is catch-all middleware (no path specified), which means it matches all incoming requests, regardless of the URL.
-
-app.use("/test",(req,res)=>{
-    res.send("Hello from server test");
+app.get("/user",(req,res)=>{
+    res.send({firstname:"hello",lastname:"JK"});
 });
 
-app.use("/hello",(req,res)=>{
-    res.send("Hello from server hello");
+app.post("/user",(req,res)=>{
+    res.send("data saved");
+});
+
+app.put("/user",(req,res)=>{
+    res.send("this put happen");
+});
+
+app.delete("/user",(req,res)=>{
+    res.send("Deletion of data done");
+});
+
+app.use("/user",(req,res)=>{
+    res.send("method of used use for all http method.");
 });
 
 app.listen(3000,()=>{
-    console.log("server is running.");
+    console.log("Listen to port 3000");
 });
+
+
