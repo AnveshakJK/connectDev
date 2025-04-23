@@ -3,26 +3,41 @@ const app = express();
 
 const {adminAuth,userAuth} = require("./middleware/mid.js");
 
-// middleware use 
-app.use("/admin",adminAuth);
+// if this change order like that then err catch then main "/" will handle otherwise "/getuserdata" will handle. if there error and same order this follow "/" then "/getuserdata" then get error as some thing etc, but order "/" then "/getuserdata" change then it will handle it. 
+
+// app.use("/",(err,req,res,next)=>{
+//     if(err){
+//       // as log error also by just alert or something like that for contain more information.
+//       res.status(500).send("something went wrong");
+//     }
+//   })
 
 
-app.post("/user/login",(req,res)=>{
-    res.send("user logged success.");  // this user auth no required as middleware customize this.
-})
+// generally writing code in try catch is good way to write code but if some unhandled error then do below that not handled.
+app.get("/getuserdata",(req,res)=>{
+    try{
 
-// it good if middle of user fails then not worry this will res.send as not going to api.
-app.use("/user",userAuth,(req,res)=>{
-    res.send("user data send");
+
+    throw new Error("dvbzhjf");
+    res.send("user Data sent");
+    }catch(err){
+
+    res.status(500).send(err.message);
+
+    }
+    // throw new Error("dvbzhjf");
+    // res.send("user Data sent");
 });
 
-app.get("/admin/getAllData",(req,res)=>{
-    res.send("All data send");
-})
 
+// order in pass this argument as it is , order must be like this as it managed by express dynamically . if 2 arg pass then it be (req,res) but in 4 arg then like this way use.if error then handled like this .this also a middleware.
 
-app.get("/admin/getDeleteData",(req,res)=>{
-    res.send("All data delete");
+// *) this will put in last of code so that if any err that not hanlde by other try catch then it will handle and as we where problem.
+app.use("/",(err,req,res,next)=>{
+  if(err){
+    // as log error also by just alert or something like that for contain more information.
+    res.status(500).send("something went wrong");
+  }
 })
 
 app.listen(3000,()=>{
