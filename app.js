@@ -1,47 +1,45 @@
 const express = require("express");
+
+// require("./config/database.js");
+
+const connectDB = require("./config/database");
+
 const app = express();
 
-const {adminAuth,userAuth} = require("./middleware/mid.js");
-
-// if this change order like that then err catch then main "/" will handle otherwise "/getuserdata" will handle. if there error and same order this follow "/" then "/getuserdata" then get error as some thing etc, but order "/" then "/getuserdata" change then it will handle it. 
-
-// app.use("/",(err,req,res,next)=>{
-//     if(err){
-//       // as log error also by just alert or something like that for contain more information.
-//       res.status(500).send("something went wrong");
-//     }
-//   })
+const User = require("./models/user"); // require models for add data to db in document
 
 
-// generally writing code in try catch is good way to write code but if some unhandled error then do below that not handled.
-app.get("/getuserdata",(req,res)=>{
+// route handler for signup
+app.post("/signup",async (req,res)=>{
+    const user = new User({
+        firstName:"Hello",
+        lastName:"world",
+        emailId:"Helloworld@gmail.com",
+        password:"Hello123"
+    });
+
     try{
-
-
-    throw new Error("dvbzhjf");
-    res.send("user Data sent");
+      await user.save();
+        res.send("user added successfully");
     }catch(err){
-
-    res.status(500).send(err.message);
-
-    }
-    // throw new Error("dvbzhjf");
-    // res.send("user Data sent");
+        res.status(400).send("Error saving the user:"+err.message);
+    }    
 });
 
+// connection for db
+connectDB()
+    .then(()=>{
+        console.log("Database connected successfully");
+        app.listen(3000,()=>{
+            console.log("Listen to port 3000");
+        });
+    })
+    .catch((err)=>{
+        console.log("Database cannot be connected");
+    });
 
-// order in pass this argument as it is , order must be like this as it managed by express dynamically . if 2 arg pass then it be (req,res) but in 4 arg then like this way use.if error then handled like this .this also a middleware.
-
-// *) this will put in last of code so that if any err that not hanlde by other try catch then it will handle and as we where problem.
-app.use("/",(err,req,res,next)=>{
-  if(err){
-    // as log error also by just alert or something like that for contain more information.
-    res.status(500).send("something went wrong");
-  }
-})
-
-app.listen(3000,()=>{
-    console.log("Listen to port 3000");
-});
+// app.listen(3000,()=>{
+//     console.log("Listen to port 3000");
+// });
 
 
