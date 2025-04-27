@@ -8,15 +8,20 @@ const app = express();
 
 const User = require("./models/user"); // require models for add data to db in document
 
-
-// route handler for signup
+app.use(express.json());
+//making a route handler for passing dynamic data into api
+//in postman passing body in raw data as in JSON format.
 app.post("/signup",async (req,res)=>{
-    const user = new User({
-        firstName:"Hello",
-        lastName:"world",
-        emailId:"Helloworld@gmail.com",
-        password:"Hello123"
-    });
+    // const user = new User({
+    //     firstName:"Hello",
+    //     lastName:"world",
+    //     emailId:"Helloworld@gmail.com",
+    //     password:"Hello123"
+    // });
+
+//    console.log(req); // get whole data incoming request
+//    console.log(req.body);
+    const user = new User(req.body);
 
     try{
       await user.save();
