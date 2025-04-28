@@ -71,13 +71,44 @@ app.get("/userid",async (req,res)=>{
     const user = await User.findById(userId);
     if(!user){
       res.send("some not there data");
-    }else{ 
+    }else{  
       res.send(user);
     }
   }catch(err){
     res.status(400).send("something went wrong");
   } 
 })
+
+
+//delete 
+app.delete("/user",async (req,res)=>{
+    const userId = req.body.id;
+  //  const userId = req.body.userId; // this not work not in schema related id work as by  mongodb given. but while making request in postman userId:"id_no" then it work
+    try{
+      const user = await User.findByIdAndDelete(userId);
+      res.send(user,"user deleted successfully");
+    } catch(err){
+      res.status(400).send("something went wrong");
+    }
+});
+
+//update
+app.patch("/userupdate",async (req,res)=>{
+  //put for whole replacement as like new item ;
+  //patch for name like just part(specific field) of it update to new.
+  // const userId = req.body.id;
+  const userId = req.body.userId;
+  const data = req.body;
+  try{
+    // const user = await User.findByIdAndUpdate(userId);
+    const user = await User.findByIdAndUpdate(userId,data); //there two parameter is passed.
+    console.log(user);
+    res.send("user updated successfully");
+  } catch(err){
+    res.status(400).send("something went wrong");
+  }
+})
+
 
 // connection for db
 connectDB()
