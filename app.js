@@ -8,9 +8,8 @@ const app = express();
 
 const User = require("./models/user"); // require models for add data to db in document
 
-app.use(express.json());
-//making a route handler for passing dynamic data into api
-//in postman passing body in raw data as in JSON format.
+app.use(express.json()); // middleware for handling json data as incoming request get into javascript object for further use it.
+
 app.post("/signup",async (req,res)=>{
     // const user = new User({
     //     firstName:"Hello",
@@ -30,6 +29,55 @@ app.post("/signup",async (req,res)=>{
         res.status(400).send("Error saving the user:"+err.message);
     }    
 });
+
+// get route for read data from database by find model by using filter - email.
+app.get("/user",async (req,res)=>{
+    const userEmail = req.body.emailId;
+  try{
+      // console.log(userEmail);
+      // const users = await User.find({emailId:userEmail});
+      const users = await User.findOne();
+  if(users.length === 0)
+      res.send("data is not there");
+    else{
+        res.send(users);
+    }
+  } catch (err){
+    res.status(400).send("something went wrong");
+  }
+});
+
+//feed api
+app.get("/feed",async (req,res)=>{
+    const userEmail = req.body.emailId;
+  try{
+      const users = await User.find({});
+  if(users.length === 0)
+      res.send("data is not there");
+    else{
+        res.send(users);
+    }
+  } catch (err){
+    res.status(400).send("something went wrong");
+  }
+});
+
+
+//get user by userid 
+app.get("/userid",async (req,res)=>{
+  const userId = req.body.id;
+  // const userId = req.body._id; // not this
+  try{
+    const user = await User.findById(userId);
+    if(!user){
+      res.send("some not there data");
+    }else{ 
+      res.send(user);
+    }
+  }catch(err){
+    res.status(400).send("something went wrong");
+  } 
+})
 
 // connection for db
 connectDB()
