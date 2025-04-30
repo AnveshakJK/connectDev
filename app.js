@@ -110,6 +110,21 @@ app.patch("/userupdate",async (req,res)=>{
 })
 
 
+
+//update with user emailId
+app.patch("/userUpwithemail",async (req,res)=>{
+  const emailId = req.body.emailId;
+  const data = req.body;
+  try{
+    const user = await User.findOneAndUpdate( { emailId: emailId },data); //this way work return before document
+    console.log(user);
+    res.send("user updated successfully");
+  } catch(err){
+    res.status(400).send("something went wrong");
+  }
+})
+
+
 // connection for db
 connectDB()
     .then(()=>{
