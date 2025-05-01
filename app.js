@@ -101,11 +101,12 @@ app.patch("/userupdate",async (req,res)=>{
   const data = req.body;
   try{
     // const user = await User.findByIdAndUpdate(userId);
-    const user = await User.findByIdAndUpdate(userId,data); //there two parameter is passed.
-    console.log(user);
+    const user = await User.findByIdAndUpdate(userId,data,{runValidators:true,}); //there two parameter is passed.
+   // in run validators if not send correct data then show error as : something went wrongValidation failed: gender: Gender data is not valid
+    console.log(user); 
     res.send("user updated successfully");
   } catch(err){
-    res.status(400).send("something went wrong");
+    res.status(400).send("something went wrong"+err.message);
   }
 })
 
