@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
-const userSchema = mongoose.Schema({
+const userSchema =new mongoose.Schema({
     firstName:{
         type:String,
         required:true,
-        minLength:4,
+        minLength:4,  
     },
     lastName:{
         type:String
@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema({
     emailId:{
         type:String,
         required:true,
-        unique:true,  // this not run properly see it again 
+        unique:true,  // this not run properly see it again , while in patch work but in post not as it run by restarting it - Error saving the user:E11000 duplicate key error collection: connectDev.users index: emailId_1 dup key: { emailId:"jayank@gmail.com" } ,but some time without new keyword it also run but and also new i didn't add while making schema.new Schema object using Mongoose’s Schema constructor. This schema defines:The structure of documents in a MongoDB collection (fields, types, etc.).Validation rules (required, minLength, etc.).Default values, custom validators.Indexes like unique.
         lowercase:true,
         trim:true,
     },

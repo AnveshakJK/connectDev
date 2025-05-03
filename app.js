@@ -23,6 +23,10 @@ app.post("/signup",async (req,res)=>{
     const user = new User(req.body);
 
     try{
+   
+      if(user?.skills.length>10)
+        throw new Error("skills cannot be more than 10"); 
+
       await user.save();
         res.send("user added successfully");
     }catch(err){
@@ -93,20 +97,37 @@ app.delete("/user",async (req,res)=>{
 });
 
 //update
-app.patch("/userupdate",async (req,res)=>{
+app.patch("/userupdate/:userId",async (req,res)=>{
   //put for whole replacement as like new item ;
   //patch for name like just part(specific field) of it update to new.
   // const userId = req.body.id;
-  const userId = req.body.userId;
+  // const userId = req.body.userId;
+  const userId = req.params?.userId; //?.userid -> if userid not passed then it not failed request
   const data = req.body;
+
+  
   try{
+    const ALLOWED_UPDATES=["userId","photourl","about","gender","age","skills"];
+
+    const isUpdateAllowed = Object.keys(data).every((k)=>ALLOWED_UPDATES.includes(k));
+
+    //check for every key should be updated in allowing key
+
+    if(!isUpdateAllowed){
+      throw new Error("Update not allowed");
+    }
+  
+      // making uservalidtion for skills notenter too much skills , making more entered data by attacker suspecious
+      if(data?.skills.length>10)
+         throw new Error("skills cannot be more than 10"); 
+
     // const user = await User.findByIdAndUpdate(userId);
     const user = await User.findByIdAndUpdate(userId,data,{runValidators:true,}); //there two parameter is passed.
    // in run validators if not send correct data then show error as : something went wrongValidation failed: gender: Gender data is not valid
     console.log(user); 
     res.send("user updated successfully");
   } catch(err){
-    res.status(400).send("something went wrong"+err.message);
+    res.status(400).send("something went wrong, "+err.message);
   }
 })
 
