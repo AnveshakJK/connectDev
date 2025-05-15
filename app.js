@@ -8,21 +8,34 @@ const app = express();
 
 const User = require("./models/user"); // require models for add data to db in document
 
+const {validateSignupDate} = require("./utils/validate");
+
+const bycrypt = require("bcrypt");
+
 app.use(express.json()); // middleware for handling json data as incoming request get into javascript object for further use it.
 
 app.post("/signup",async (req,res)=>{
-    // const user = new User({
-    //     firstName:"Hello",
-    //     lastName:"world",
-    //     emailId:"Helloworld@gmail.com",
-    //     password:"Hello123"
-    // });
 
-//    console.log(req); // get whole data incoming request
-//    console.log(req.body);
-    const user = new User(req.body);
+try{
+   //validate the data 
+   validateSignupDate(req);
 
-    try{
+  // const {password} = req.body;
+  const {firstName,lastName,emailId,password}=req.body; // before to use there must difined first
+
+   // encrypt the data 
+  const passwordhased = await bycrypt.hash(password,10);
+ console.log(passwordhased);
+
+   // store the password as in hashed 
+
+    // const user = new User(req.body); //it not good practice to add like way req.body pass all thing iside this. do as,,
+  const  user = new User({
+    firstName,
+    lastName,
+    emailId,
+    password:passwordhased,
+  })
    
       if(user?.skills.length>10)
         throw new Error("skills cannot be more than 10"); 
@@ -34,12 +47,39 @@ app.post("/signup",async (req,res)=>{
     }    
 });
 
-// get route for read data from database by find model by using filter - email.
+
+//login api
+
+app.post("/login", async (req,res)=>{
+  try{
+
+   const {emailId,password}=req.body;
+
+   // fistly check enter email id is correct or not 
+   const user = await User.findOne({emailId:emailId});
+
+   if(!user){
+    throw new Error("Email id not valid.");
+   }
+  // corresponding eamilid check password weather the detail is correct or not, password that compare(send , hashed password) function in bcrypt. 
+   const ispassword = await bycrypt.compare(password,user.password);
+
+   if(ispassword){
+    res.send("login success");
+   }else{
+    throw new Error("password not correct");
+   }
+
+  }catch(err){
+    res.status(400).send("Err "+err.message);
+  }
+})
+
+
 app.get("/user",async (req,res)=>{
     const userEmail = req.body.emailId;
   try{
-      // console.log(userEmail);
-      // const users = await User.find({emailId:userEmail});
+      
       const users = await User.findOne();
   if(users.length === 0)
       res.send("data is not there");
@@ -130,7 +170,6 @@ app.patch("/userupdate/:userId",async (req,res)=>{
     res.status(400).send("something went wrong, "+err.message);
   }
 })
-
 
 
 //update with user emailId

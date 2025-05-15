@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const userSchema =new mongoose.Schema({
     firstName:{
@@ -15,10 +16,20 @@ const userSchema =new mongoose.Schema({
         unique:true,  // this not run properly see it again , while in patch work but in post not as it run by restarting it - Error saving the user:E11000 duplicate key error collection: connectDev.users index: emailId_1 dup key: { emailId:"jayank@gmail.com" } ,but some time without new keyword it also run but and also new i didn't add while making schema.new Schema object using Mongoose’s Schema constructor. This schema defines:The structure of documents in a MongoDB collection (fields, types, etc.).Validation rules (required, minLength, etc.).Default values, custom validators.Indexes like unique.
         lowercase:true,
         trim:true,
+        validator(value){
+            if(!validator.isEmail(value)){
+                throw new Error("invalid email address: "+value);
+            }
+        }
     },
     password:{
         type:String,
-        required:true
+        required:true,
+        validator(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error("not a strong password,minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1: "+value);
+            }
+        }
     },
     age:{
         type:String,
@@ -35,7 +46,12 @@ const userSchema =new mongoose.Schema({
     },
     photourl:{
         type:String,
-        default:"https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-profile-picture-male-icon.png"
+        default:"https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-profile-picture-male-icon.png",
+        validator(value){
+            if(!validator.isURL(value)){
+                throw new Error("invalid image url: "+value);
+            }
+        }
     },
     about:{
         type:String,

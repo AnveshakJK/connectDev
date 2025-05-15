@@ -15,7 +15,9 @@
   "author": "Jayank",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^5.1.0",
-    "mongoose": "^8.13.2"
+    "mongoose": "^8.13.2",
+    "validator": "^13.15.0"
   }
 }
