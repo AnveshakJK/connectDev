@@ -16,6 +16,8 @@ const cookieParser = require("cookie-parser");
 
 const jwt = require("jsonwebtoken");
 
+const {userAuth}=require("./middleware/mid");
+
 app.use(express.json()); // middleware for handling json data as incoming request get into javascript object for further use it.
 
 app.use(cookieParser());
@@ -74,11 +76,14 @@ app.post("/login", async (req,res)=>{
     // create a jwt token  - jwt tokein is divided into 3token header,payload,signature 
     //require a jsonwebtoken developed by auth0;
      
-      const token = await jwt.sign({_id:user._id} , "Jayank@123$"); // id and secret password for token in want of conversion
+      //const token = await jwt.sign({_id:user._id} , "Jayank@123$"); 
+
+      const token = await jwt.sign({_id:user._id} , "Jayank@123$",{expiresIn:"1d"}); // id and secret password for token in want of conversion // later added expire jwt
+
 
       console.log(token);
 
-     res.cookie("token",token);
+     res.cookie("token",token,{expires:new Date(Date.now()+1*60000)}); // expiring a cookie after 1min
     res.send("login success");
    }else{
     throw new Error("password not correct");
@@ -91,150 +96,28 @@ app.post("/login", async (req,res)=>{
 
 
 //profile api
-app.get("/profile",async(req,res)=>{
+app.get("/profile",userAuth,async(req,res)=>{
   try{ 
-  //get cookie? 
-  const cookie = req.cookies;
-  // console.log(cookie); // as this time get undefined cookie get . so to read use middleware which is cookie parser 
-  
-  // get cookie back 
-  const {token} = cookie;
-  if(!token){
-    throw new Error("invalid token");
-  }
-//  console.log(token);
-   //validation of token 
-   const decodemessage = await jwt.verify(token,"Jayank@123$");
 
-   const {_id} = decodemessage;
-  //  console.log("log in user"+_id);
-  
-  if(user){
-    throw new Error("user is not valid");
-  }
-
-  const user = await User.findById(_id);
-  console.log(user);
+    const user = req.user;
  
   res.send(user);
 
-  //  console.log(decodemessage);
-  
-//  console.log(cookie);
-  // res.send("read a cookie");
 }  catch(err){
 res.status(400).send("Error : "+err.message);
 }
 }) ;
 
 
-app.get("/user",async (req,res)=>{
-    const userEmail = req.body.emailId;
-  try{
-      
-      const users = await User.findOne();
-  if(users.length === 0)
-      res.send("data is not there");
-    else{
-        res.send(users);
-    }
-  } catch (err){
-    res.status(400).send("something went wrong");
-  }
-});
+app.post("/sendconnectionRequest",userAuth,async(req,res)=>{
+  //send a connection request;
+  console.log("send a connection request");
+  //read a request who made
+    const user = req.user;
 
-//feed api
-app.get("/feed",async (req,res)=>{
-    const userEmail = req.body.emailId;
-  try{
-      const users = await User.find({});
-  if(users.length === 0)
-      res.send("data is not there");
-    else{
-        res.send(users);
-    }
-  } catch (err){
-    res.status(400).send("something went wrong");
-  }
-});
+  res.send(user.firstName+"send a connection request");
 
-
-//get user by userid 
-app.get("/userid",async (req,res)=>{
-  const userId = req.body.id;
-  // const userId = req.body._id; // not this
-  try{
-    const user = await User.findById(userId);
-    if(!user){
-      res.send("some not there data");
-    }else{  
-      res.send(user);
-    }
-  }catch(err){
-    res.status(400).send("something went wrong");
-  } 
-})
-
-
-//delete 
-app.delete("/user",async (req,res)=>{
-    const userId = req.body.id;
-  //  const userId = req.body.userId; // this not work not in schema related id work as by  mongodb given. but while making request in postman userId:"id_no" then it work
-    try{
-      const user = await User.findByIdAndDelete(userId);
-      res.send(user,"user deleted successfully");
-    } catch(err){
-      res.status(400).send("something went wrong");
-    }
-});
-
-//update
-app.patch("/userupdate/:userId",async (req,res)=>{
-  //put for whole replacement as like new item ;
-  //patch for name like just part(specific field) of it update to new.
-  // const userId = req.body.id;
-  // const userId = req.body.userId;
-  const userId = req.params?.userId; //?.userid -> if userid not passed then it not failed request
-  const data = req.body;
-
-  
-  try{
-    const ALLOWED_UPDATES=["userId","photourl","about","gender","age","skills"];
-
-    const isUpdateAllowed = Object.keys(data).every((k)=>ALLOWED_UPDATES.includes(k));
-
-    //check for every key should be updated in allowing key
-
-    if(!isUpdateAllowed){
-      throw new Error("Update not allowed");
-    }
-  
-      // making uservalidtion for skills notenter too much skills , making more entered data by attacker suspecious
-      if(data?.skills.length>10)
-         throw new Error("skills cannot be more than 10"); 
-
-    // const user = await User.findByIdAndUpdate(userId);
-    const user = await User.findByIdAndUpdate(userId,data,{runValidators:true,}); //there two parameter is passed.
-   // in run validators if not send correct data then show error as : something went wrongValidation failed: gender: Gender data is not valid
-    console.log(user); 
-    res.send("user updated successfully");
-  } catch(err){
-    res.status(400).send("something went wrong, "+err.message);
-  }
-})
-
-
-//update with user emailId
-app.patch("/userUpwithemail",async (req,res)=>{
-  const emailId = req.body.emailId;
-  const data = req.body;
-  try{
-    const user = await User.findOneAndUpdate( { emailId: emailId },data); //this way work return before document
-    console.log(user);
-    res.send("user updated successfully");
-  } catch(err){
-    res.status(400).send("something went wrong");
-  }
+  res.send("connection request");
 })
 
 
