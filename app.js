@@ -70,7 +70,10 @@ app.post("/login", async (req,res)=>{
     throw new Error("Email id not valid.");
    }
   // corresponding eamilid check password weather the detail is correct or not, password that compare(send , hashed password) function in bcrypt. 
-   const ispassword = await bycrypt.compare(password,user.password);
+  //  const ispassword = await bycrypt.compare(password,user.password); 
+
+  //***  password for also used schema method
+  const ispassword = await user.ValidatePassword(password);
 
    if(ispassword){
     // create a jwt token  - jwt tokein is divided into 3token header,payload,signature 
@@ -78,7 +81,11 @@ app.post("/login", async (req,res)=>{
      
       //const token = await jwt.sign({_id:user._id} , "Jayank@123$"); 
 
-      const token = await jwt.sign({_id:user._id} , "Jayank@123$",{expiresIn:"1d"}); // id and secret password for token in want of conversion // later added expire jwt
+      // const token = await jwt.sign({_id:user._id} , "Jayank@123$",{expiresIn:"1d"}); // id and secret password for token in want of conversion // later added expire jwt
+
+      //*** user schema method
+
+      const token = await user.getJwt();
 
 
       console.log(token);

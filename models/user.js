@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+
 const userSchema =new mongoose.Schema({
     firstName:{
         type:String,
@@ -64,6 +67,25 @@ const userSchema =new mongoose.Schema({
 
 // create a model - like class which create it instance.
 
-const User = mongoose.model("User",userSchema);
+// const User = mongoose.model("User",userSchema); 
 
+// schema method 
+
+//for jwt
+// there normal function use not arrow function due to "this";
+userSchema.methods.getJwt = async function (){
+    const user = this;
+  const token = await jwt.sign({_id:user._id},"Jayank@123$",{expiresIn:"1d"});
+  return token;
+};
+
+//for password
+userSchema.methods.ValidatePassword = async function(passwordInputuser){
+    const user = this;
+    const passwordhash = user.password;
+    console.log(passwordhash);
+    const ispasswordValid = await bcrypt.compare(passwordInputuser,passwordhash);
+    return ispasswordValid;
+}
+const User = mongoose.model("User",userSchema); 
 module.exports = User; 
