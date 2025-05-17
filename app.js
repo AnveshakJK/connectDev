@@ -12,7 +12,13 @@ const {validateSignupDate} = require("./utils/validate");
 
 const bycrypt = require("bcrypt");
 
+const cookieParser = require("cookie-parser");
+
+const jwt = require("jsonwebtoken");
+
 app.use(express.json()); // middleware for handling json data as incoming request get into javascript object for further use it.
+
+app.use(cookieParser());
 
 app.post("/signup",async (req,res)=>{
 
@@ -65,6 +71,14 @@ app.post("/login", async (req,res)=>{
    const ispassword = await bycrypt.compare(password,user.password);
 
    if(ispassword){
+    // create a jwt token  - jwt tokein is divided into 3token header,payload,signature 
+    //require a jsonwebtoken developed by auth0;
+     
+      const token = await jwt.sign({_id:user._id} , "Jayank@123$"); // id and secret password for token in want of conversion
+
+      console.log(token);
+
+     res.cookie("token",token);
     res.send("login success");
    }else{
     throw new Error("password not correct");
@@ -74,6 +88,44 @@ app.post("/login", async (req,res)=>{
     res.status(400).send("Err "+err.message);
   }
 })
+
+
+//profile api
+app.get("/profile",async(req,res)=>{
+  try{ 
+  //get cookie? 
+  const cookie = req.cookies;
+  // console.log(cookie); // as this time get undefined cookie get . so to read use middleware which is cookie parser 
+  
+  // get cookie back 
+  const {token} = cookie;
+  if(!token){
+    throw new Error("invalid token");
+  }
+//  console.log(token);
+   //validation of token 
+   const decodemessage = await jwt.verify(token,"Jayank@123$");
+
+   const {_id} = decodemessage;
+  //  console.log("log in user"+_id);
+  
+  if(user){
+    throw new Error("user is not valid");
+  }
+
+  const user = await User.findById(_id);
+  console.log(user);
+ 
+  res.send(user);
+
+  //  console.log(decodemessage);
+  
+//  console.log(cookie);
+  // res.send("read a cookie");
+}  catch(err){
+res.status(400).send("Error : "+err.message);
+}
+}) ;
 
 
 app.get("/user",async (req,res)=>{
