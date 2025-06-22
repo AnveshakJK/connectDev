@@ -40,7 +40,7 @@ try{
     }    
 });
 
-authRouter.post("/login", async (req,res)=>{
+authRouter.post("/login", async(req,res)=>{
   try{
 
    const {emailId,password}=req.body;
@@ -72,7 +72,7 @@ authRouter.post("/login", async (req,res)=>{
 
       console.log(token);
 
-     res.cookie("token",token,{expires:new Date(Date.now()+1*60000)}); // expiring a cookie after 1min
+     res.cookie("token",token,{expires:new Date(Date.now()+4*60000)}); // expiring a cookie after 1min
     res.send("login success");
    }else{
     throw new Error("password not correct");
@@ -81,6 +81,13 @@ authRouter.post("/login", async (req,res)=>{
   }catch(err){
     res.status(400).send("Err "+err.message);
   }
-})
+});
+
+//logout api call
+authRouter.post("/logout",async(req,res)=>{
+  res.cookie("token",null,{expires:new Date(Date.now())});
+  res.send("logout successfully!");
+});
+
 
 module.exports = authRouter;
