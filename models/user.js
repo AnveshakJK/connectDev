@@ -71,6 +71,11 @@ const userSchema =new mongoose.Schema({
 
 // schema method 
 
+// User.find({firstName:"Akshay",lastName:"Saini"});
+userSchema.index({firstName:1,lsatName:1});  // compound indexes be done here
+
+userSchema.index({gender:1});
+
 //for jwt
 // there normal function use not arrow function due to "this";
 userSchema.methods.getJwt = async function (){
