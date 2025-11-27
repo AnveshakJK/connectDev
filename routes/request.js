@@ -57,4 +57,59 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
   // res.send(user.firstName+"send a connection request");
 });
 
+//making a user receive request wheather it accept or reject, there in (path,middleware,next());
+requestRouter.post(
+  "/request/review/:status/:requestId",
+  userAuth,
+  async(req,res)=>{
+    try{
+
+      const loggedInUser = req.user;
+      const {status,requestId} = req.params;
+
+      // to user must loggedIn then it able to accept that request
+      // but acceptance happen if "interested" status is there. 
+     
+      //if once time it rejected then unable to make that request then it have send request again.as can't reverse
+       
+      //validate status as not zibrish send
+       //akshay => elon
+       // is elon loggedinId user == toUserId
+       // status interested
+       // request Id should be valid
+
+        const allowedStatus = ["accepted","rejected"];
+        if(!allowedStatus.includes(status)){
+          return res.status(400).json({message:"status not allowed!"});
+        }
+
+        //requestId check
+        const connectionRequest = await connectionRequestModel.findOne({
+          _id:requestId,
+          toUserId:loggedInUser._id, 
+          status:"interested",
+        });
+
+         if(!connectionRequest){
+          return res
+          .status(404)
+          .json({message:"connection request not found!"});
+         }
+
+         connectionRequest.status = status; // status in allowed status
+
+         const data = await connectionRequest.save(); // before save there must do check,sanitize the data i.e why at last in there insert.
+
+         res.json({message:"connection request" + status,data});
+
+    }catch(err){
+      res.status(400).send("ERROR: "+err.message);
+    }
+  }
+);
+
 module.exports = requestRouter;
+
+
+// thought process of PUT & GET;
+//
