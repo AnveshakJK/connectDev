@@ -13,13 +13,14 @@ app.use(cookieParser());
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
+const userRouter = require("./routes/user");
 
 
 app.use("/",authRouter); //request coming to slash , go to and check all routes for inside this whichever is matching then by request handler handle this.
  
 app.use("/",profileRouter);
 app.use("/",requestRouter);  // express go one by one if it not find in upper routerhandler, middlewares.
-
+app.use("/",userRouter);
 
 // connection for db
 connectDB()

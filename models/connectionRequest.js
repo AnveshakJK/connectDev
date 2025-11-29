@@ -5,10 +5,12 @@ const mongoose = require('mongoose');
 const connectionRequestSchema = new mongoose.Schema({
    fromUserId:{
     type:mongoose.Schema.Types.ObjectId , 
+    ref:"User",// managing a refernce link between fromUserId to User collection which in schema.
     required : true,
    },
    toUserId:{
     type:mongoose.Schema.Types.ObjectId ,
+    ref:"User",
     required : true,
    },
    status:{
