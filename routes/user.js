@@ -7,6 +7,8 @@ const {userAuth} = require("../middleware/mid");
 
 const connectionRequestModel = require("../models/connectionRequest");
 
+const User = require("../models/user");
+
 const USER_SAFE_DATA = "firstName lastName photoUrl";
 
 //get all the pending connection request for the logged in user.
@@ -86,5 +88,68 @@ userRouter.get("/user/connections",userAuth,async(req,res)=>{
     }
 }); 
 
+
+//feed api request make 
+userRouter.get("/feed",userAuth,async(req,res)=>{
+    try{
+       //*(akshay => elon) requested then again request not seen like accepted not show again on feed , akshay shouldn't see of itself also.exclude all which not want to see.
+
+       //Todo: ->) usern't should see all the user cards except 
+       //0) his on card.
+       //1) his connections
+       //2) ignored people
+       //3) already sent the connection request 
+
+       // Example: rahul = [akshay,elon,mark,donald,dhoni,virat]
+       // rahul-> akshay , rahul->elon (sent connection) 
+       // now it see rahul = [mark,donald,dhoni,virat]
+       // if r->akshay-> rejected ,, r->elon->accepted  (so no there not see each other profile as this.)
+       // elon = [mark,donald,dhoni,virat,akshay]
+
+
+       // find loggedin user
+       const loggedInUser = req.user;
+
+       // find all connection request(sent+received)
+       const connectionRequests = await connectionRequestModel.find({
+        $or:[
+            {fromUserId:loggedInUser},
+            {toUserId:loggedInUser},
+        ],
+        // select is help to what data i want to need then selectively only show.
+        //as not need to populate but as just see. 
+       }).select("fromUserId toUserId")
+    //    .populate("fromUserId","firstName")
+    //    .populate("toUserId","firstName");
+
+    // as now segrate this , blocked user
+    // set data structure is like an array ,used like 
+    // [A,B,C,D,E] unique element it store it,value repeat if then ignore it.
+    const hideUsersFromFeed = new Set();
+    // loop through all these connection request
+    connectionRequests.forEach(req => {
+        hideUsersFromFeed.add(req.fromUserId.toString());
+        hideUsersFromFeed.add(req.toUserId.toString());
+    }); 
+     console.log(hideUsersFromFeed);  // as get of data which is need to hide from feed.
+
+     //now from that user hide find it by use reverseQuery method 
+     // as now make a db call where all user from to find which id is not in array there (nin)id. 
+     const users = await User.find({
+        // nin -> not in user Id,there also one condition that not itself.
+        $and:[
+       { _id:{$nin:Array.from(hideUsersFromFeed) }},
+       {_id:{$ne:loggedInUser._id}}, //ne:->not in this array.(itself id).All these get from mongoDb query documentation ne,nin,etc.
+        ],
+        // only necessary item that need to be show not others.
+     }).select(USER_SAFE_DATA);   // so this data need to send back to user which in there list.
+
+    //    res.send(connectionRequests);
+    res.send(users);
+
+    } catch(err){
+        res.status(400).json({message:err.message});
+    }
+}); 
 
 module.exports = userRouter;
