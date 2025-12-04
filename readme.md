@@ -24,6 +24,15 @@ This matches ALL paths (/, /test, /hello, etc.)
 It sends a response immediately.
 No next() is called, so Express says, "I'm done," and doesn't look at /test or /hello.
 
+pagination -> in JavaScript is a technique used to divide a large dataset into smaller, more manageable sections, or "pages," for display on a web page.
 
+/feed?page=1&limit=10 -> first 10 users 1-10   skip(0) & limit(10)
+/feed?page=2 & limit=10 -> users 11-20        skip(10) & limit(10)
+/feed?page=3&limit=10-> users 21-30            skip(20) & limit(10)
 
+// these function in mongodb
+-> skip() how many document it skip from start , skip(0) -> skipping 0 user.
+-> limit() how many document it set ,limit(10) limit upto 10.
+
+so,skip = (page-1)*limit;
 

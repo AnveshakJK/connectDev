@@ -90,7 +90,9 @@ userRouter.get("/user/connections",userAuth,async(req,res)=>{
 
 
 //feed api request make 
-userRouter.get("/feed",userAuth,async(req,res)=>{
+// /feed/:skip/etc   ,, / /feed?page=1&limit=10   -> these are params; ,see it req.params and req.query that get from api page request.
+// userRouter.get("/feed?page=1&limit=10",userAuth,async(req,res)=>{
+    userRouter.get("/feed",userAuth,async(req,res)=>{
     try{
        //*(akshay => elon) requested then again request not seen like accepted not show again on feed , akshay shouldn't see of itself also.exclude all which not want to see.
 
@@ -109,6 +111,14 @@ userRouter.get("/feed",userAuth,async(req,res)=>{
 
        // find loggedin user
        const loggedInUser = req.user;
+
+    //    const page = parseInt(req.params.page) || 1;  // take from query not params
+       const page = parseInt(req.query.page) || 1;
+    //    const limit = parseInt(req.query.limit) || 10;
+       let limit = parseInt(req.query.limit) || 10; // by default limit is 10 if not pass any query. as we have to sanitize the data suppose as far limit exceeded then it take more time and funtion suppose 100000.
+
+       limit = limit>50? 50:limit;
+       const skip = (page-1)*limit;
 
        // find all connection request(sent+received)
        const connectionRequests = await connectionRequestModel.find({
@@ -142,14 +152,17 @@ userRouter.get("/feed",userAuth,async(req,res)=>{
        {_id:{$ne:loggedInUser._id}}, //ne:->not in this array.(itself id).All these get from mongoDb query documentation ne,nin,etc.
         ],
         // only necessary item that need to be show not others.
-     }).select(USER_SAFE_DATA);   // so this data need to send back to user which in there list.
+     }).select(USER_SAFE_DATA).skip(skip).limit(limit);   // so this data need to send back to user which in there list. // and in there is not pass any like skip then it be by default 0.
 
     //    res.send(connectionRequests);
-    res.send(users);
+    //res.send(users);// always send in json format as get to help error handle;
+    res.json({data:users});
 
     } catch(err){
         res.status(400).json({message:err.message});
     }
 }); 
+
+// 
 
 module.exports = userRouter;
