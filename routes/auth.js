@@ -73,7 +73,8 @@ authRouter.post("/login", async(req,res)=>{
       console.log(token);
 
      res.cookie("token",token,{expires:new Date(Date.now()+4*60000)}); // expiring a cookie after 1min
-    res.send("login success");
+    // res.send("login success");
+    res.send(user); // after login success send user data to frontend,get back of user data in login.jsx.
    }else{
     throw new Error("password not correct");
    }
