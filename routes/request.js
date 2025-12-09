@@ -58,8 +58,7 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
 });
 
 //making a user receive request wheather it accept or reject, there in (path,middleware,next());
-requestRouter.post(
-  "/request/review/:status/:requestId",
+requestRouter.post("/request/review/:status/:requestId",
   userAuth,
   async(req,res)=>{
     try{

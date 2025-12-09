@@ -5,6 +5,10 @@ const User = require("../models/user");
  try { //Read the token from the req cookies
 
    const {token}=req.cookies;
+   if(!token){
+      // throw new Error("Token not present");
+      return res.status(401).send("Please Login!");
+   }
    const decodeobj = await jwt.verify(token,"Jayank@123$");
 
    // validate the token 
