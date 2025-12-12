@@ -35,24 +35,24 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
   return res.status(404).json({message:"user not found"});
  }
 
-  const existingConnectionRequest = await connectionRequest.findOne({$or:[{fromUserId,toUserId},{fromUserId:toUserId,toUserId:fromUserId}],}); 
+  const existingConnectionRequest = await connectionRequestModel.findOne({$or:[{fromUserId,toUserId},{fromUserId:toUserId,toUserId:fromUserId}],}); 
    if(existingConnectionRequest){
     return res.status(400).send({message:"connection request Already Exist!!"});
    }
 
 
-    const connectionRequest = new connectionRequestModel({
+    const newconnectionRequest = new connectionRequestModel({
       fromUserId,
       toUserId,
       status
     });
 
-    const data = await connectionRequest.save();
+    const data = await newconnectionRequest.save();
 
     res.json({message:req.user.firstName+"is"+status+"in"+toUser.firstName,data});
   } catch(err){
     // req.status(400).send("Error:"+err.message);
-    req.send("Error:"+err.message);
+    res.send("Error:"+err.message);
   }
 
   // res.send(user.firstName+"send a connection request");
