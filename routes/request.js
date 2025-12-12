@@ -51,7 +51,8 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
 
     res.json({message:req.user.firstName+"is"+status+"in"+toUser.firstName,data});
   } catch(err){
-    req.status(400).send("Error:"+err.message);
+    // req.status(400).send("Error:"+err.message);
+    req.send("Error:"+err.message);
   }
 
   // res.send(user.firstName+"send a connection request");

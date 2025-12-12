@@ -9,7 +9,7 @@ const connectionRequestModel = require("../models/connectionRequest");
 
 const User = require("../models/user");
 
-const USER_SAFE_DATA = "firstName lastName photoUrl";
+const USER_SAFE_DATA = "firstName lastName photourl about gender age";// this is used to populate only safe data not password,emailId,etc.that need to be show.
 
 //get all the pending connection request for the logged in user.
 userRouter.get("/user/requests/received",userAuth,async(req,res)=>{ 
