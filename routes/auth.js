@@ -33,8 +33,14 @@ try{
       if(user?.skills.length>10)
         throw new Error("skills cannot be more than 10"); 
 
-      await user.save();
-        res.send("user added successfully");
+     const saveUser = await user.save();
+
+     const token = await saveUser.getJwt();
+
+      res.cookie("token",token,{expires:new Date(Date.now()+4*60000)}); // expiring a cookie after 1min
+   
+
+        res.json({message:"user added successfully",data:saveUser});
     }catch(err){
         res.status(400).send("Error saving the user:"+err.message);
     }    
