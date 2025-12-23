@@ -1,5 +1,5 @@
 const express = require("express");
-
+// if use of ejs then type module is useful otherwise by deafult of commonJs module use
 const connectDB = require("./config/database");
 
 const app = express();
