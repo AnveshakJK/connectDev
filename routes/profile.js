@@ -12,7 +12,7 @@ profileRouter.get("/profile/view",userAuth,async(req,res)=>{
   res.send(user);
 
 }  catch(err){
-res.status(400).send("Error : "+err.message);
+res.status(400).send("Err "+err.message);
 }
 });
 
@@ -22,7 +22,7 @@ profileRouter.patch("/profile/edit",userAuth,async(req,res)=>{
       
     if(!validateEditProfileData(req)){
     //  console.log("REQ BODY => ", req.body);
-        throw new Error("invalid edit request");
+        throw new Error("Invalid Edit Request!");
     }
 
     const logUser = req.user;
@@ -43,7 +43,7 @@ profileRouter.patch("/profile/edit",userAuth,async(req,res)=>{
 
 
   }catch(err){
-    res.status(400).send("Error: "+err.message);
+    res.status(400).send(err.message);
   }
 });
 

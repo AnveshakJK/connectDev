@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 
 const authRouter = express.Router();
 const bycrypt = require("bcrypt");
@@ -22,7 +22,7 @@ try{
 
    // store the password as in hashed 
 
-    // const user = new User(req.body); //it not good practice to add like way req.body pass all thing iside this. do as,,
+    // const user = new User(req.body); //it not good practice to add like way req.body pass all thing inside this. do as,,
   const  user = new User({
     firstName,
     lastName,
@@ -37,12 +37,12 @@ try{
 
      const token = await saveUser.getJwt();
 
-      res.cookie("token",token,{expires:new Date(Date.now()+4*60000)}); // expiring a cookie after 1min
+      res.cookie("token",token,{expires:new Date(Date.now()+4*60000)}); // expiring a cookie after min
    
 
         res.json({message:"user added successfully",data:saveUser});
     }catch(err){
-        res.status(400).send("Error saving the user:"+err.message);
+        res.status(400).send("Not save the user:"+err.message);
     }    
 });
 

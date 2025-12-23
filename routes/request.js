@@ -52,7 +52,7 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
     res.json({message:req.user.firstName+"is"+status+"in"+toUser.firstName,data});
   } catch(err){
     // req.status(400).send("Error:"+err.message);
-    res.send("Error:"+err.message);
+    res.send("Err "+err.message);
   }
 
   // res.send(user.firstName+"send a connection request");
@@ -103,7 +103,7 @@ requestRouter.post("/request/review/:status/:requestId",
          res.json({message:"connection request" + status,data});
 
     }catch(err){
-      res.status(400).send("ERROR: "+err.message);
+      res.status(400).send("Err "+err.message);
     }
   }
 );
