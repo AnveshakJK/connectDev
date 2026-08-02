@@ -9,7 +9,8 @@ profileRouter.get("/profile/view",userAuth,async(req,res)=>{
 
     const user = req.user;
  
-  res.send(user);
+  // res.send(user);
+  res.send("user Profile");
 
 }  catch(err){
 res.status(400).send("Err "+err.message);
@@ -26,7 +27,7 @@ profileRouter.patch("/profile/edit",userAuth,async(req,res)=>{
     }
 
     const logUser = req.user;
-    console.log(logUser);
+    // console.log(logUser);
 
     //logUser.firstName = req.body.firstName;// not good to edit one by one so instead use method
     

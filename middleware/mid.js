@@ -1,5 +1,6 @@
- const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+require("dotenv").config();
 
  const userAuth = async(req,res,next)=>{
  try { //Read the token from the req cookies
@@ -9,7 +10,7 @@ const User = require("../models/user");
       // throw new Error("Token not present");
       return res.status(401).send("Please Login!");
    }
-   const decodeobj = await jwt.verify(token,"Jayank@123$");
+   const decodeobj = await jwt.verify(token,process.env.tokenPW);
 
    // validate the token 
 

@@ -5,20 +5,19 @@ const bycrypt = require("bcrypt");
 const {validateSignupDate} = require("../utils/validate");
 const User = require("../models/user"); // require models for add data to db in document
 const jwt = require("jsonwebtoken");
-
+require("dotenv").config();
 
 authRouter.post("/signup",async (req,res)=>{
 
 try{
    //validate the data 
-   validateSignupDate(req);
+  validateSignupDate(req);
 
   // const {password} = req.body;
   const {firstName,lastName,emailId,password}=req.body; // before to use there must difined first
 
    // encrypt the data 
-  const passwordhased = await bycrypt.hash(password,10);
- console.log(passwordhased);
+  const passwordhased = await bycrypt.hash(password,process.env.hashPwLength);
 
    // store the password as in hashed 
 
@@ -76,11 +75,12 @@ authRouter.post("/login", async(req,res)=>{
       const token = await user.getJwt();
 
 
-      console.log(token);
+      // console.log(token);
 
      res.cookie("token",token,{expires:new Date(Date.now()+4*60000)}); // expiring a cookie after 1min
     // res.send("login success");
-    res.send(user); // after login success send user data to frontend,get back of user data in login.jsx.
+    // res.send(user);
+    res.send("User Connected"); // after login success send user data to frontend,get back of user data in login.jsx.
    }else{
     throw new Error("password not correct");
    }

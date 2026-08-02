@@ -109,7 +109,3 @@ requestRouter.post("/request/review/:status/:requestId",
 );
 
 module.exports = requestRouter;
-
-
-// thought process of PUT & GET;
-//

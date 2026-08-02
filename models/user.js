@@ -88,7 +88,6 @@ userSchema.methods.getJwt = async function (){
 userSchema.methods.ValidatePassword = async function(passwordInputuser){
     const user = this;
     const passwordhash = user.password;
-    console.log(passwordhash);
     const ispasswordValid = await bcrypt.compare(passwordInputuser,passwordhash);
     return ispasswordValid;
 }
