@@ -32,7 +32,7 @@ userRouter.get("/user/requests/received",userAuth,async(req,res)=>{
           
             // .populate("fromUserId","firstName" "lastName") through string way populate.
 
-        }).populate("fromUserId",["firstName","lastName"]);  // through array way populate.
+        }).populate("fromUserId",["firstName","lastName","photourl","about","age","gender"]);  // through array way populate.
 
 
         res.json({mesage:"Data fetched successfully",data:connectionRequests});
