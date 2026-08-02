@@ -2,31 +2,27 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 require("dotenv").config();
 
- const userAuth = async(req,res,next)=>{
- try { //Read the token from the req cookies
-
-   const {token}=req.cookies;
-   if(!token){
-      // throw new Error("Token not present");
+const userAuth = async (req, res, next) => {
+  try {
+    const { token } = req.cookies;
+    if (!token) {
       return res.status(401).send("Please Login!");
-   }
-   const decodeobj = await jwt.verify(token,process.env.tokenPW);
+    }
+    const decodeobj = await jwt.verify(token, process.env.tokenPW);
 
-   // validate the token 
+    // validate the token
 
-   const {_id}=decodeobj;
-   const user = await User.findById(_id);
+    const { _id } = decodeobj;
+    const user = await User.findById(_id);
 
-   // find the username of particular if for user is there or not
-   
-   if(!user){
+    if (!user) {
       throw new Error("User not found");
-   }
-   req.user=user;
-   next(); // to move to next handler, as there(req,res)=>{};
-}catch(err){
-   res.status(400).send("Error"+err.message);
-}
- };
+    }
+    req.user = user;
+    next();
+  } catch (err) {
+    res.status(400).send("Error" + err.message);
+  }
+};
 
- module.exports={userAuth};
+module.exports = { userAuth };
