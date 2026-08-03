@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema(
         if (!validator.isStrongPassword(value)) {
           throw new Error(
             "not a strong password,minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1: " +
-              value,
+            value,
           );
         }
       },
@@ -69,7 +69,15 @@ const userSchema = new mongoose.Schema(
       type: [String],
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: {
+      transform: function (doc, ret) {
+        delete ret.password;  // Automatically strips the password field from the JSON output
+        return ret;
+      }
+    }
+  },
 );
 
 userSchema.index({ firstName: 1, lsatName: 1 }); // compound indexes be done here
